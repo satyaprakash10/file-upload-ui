@@ -43,7 +43,7 @@ Note: this component requires more time to customize your own requirements based
 ## Why I have use vue-dropzone libraries and component:-
 
 - The vuedropzone allows us to use all the features which are covered to upload any file dynamically.
-- this component libraries manage the process of file managing easily and flexibility, by simply runing the different status event and the use of its respective necessary methods on run time!
+- this component libraries manage the process of file managing easily and flexibility, by simply using the different status & event with the use of its respective methods on run time!
 - hence this vuedropzone if fully relaible to use and to manage the file uploading process and its structure!
 
 
