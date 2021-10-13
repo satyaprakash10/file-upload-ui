@@ -22,7 +22,8 @@ npm run lint
 
 
 File Upload & File Managing Demo link: https://www.loom.com/share/29c1b65d844b497cb486a4aaf02668d4
-this is a file-upload demo which is made up of vuejs and tailwind ui framework.
+
+This is a file upload demo which is made up of vuejs and tailwind ui framework.
 
 ## Steps to be follow to run the project!
 
