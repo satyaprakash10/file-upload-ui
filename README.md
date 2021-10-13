@@ -21,7 +21,6 @@ npm run lint
 ```
 
 
-
 File Upload & File Managing Demo link: https://www.loom.com/share/29c1b65d844b497cb486a4aaf02668d4
 this is a file-upload demo which is made up of vuejs and tailwind ui framework.
 
@@ -43,14 +42,14 @@ Note: this component requires more time to customize your own requirements based
 ## Why I have use vue-dropzone libraries and component:-
 
 - The vuedropzone allows us to use all the features which are covered to upload any file dynamically.
-- this component libraries manage the process of file managing easily and flexibility, by simply using the different status & event with the use of its respective methods on run time!
+- this component libraries manage the process of file managing easily and flexibility, by simply runing the different status event and the use of its respective necessary methods on run time!
 - hence this vuedropzone if fully relaible to use and to manage the file uploading process and its structure!
 
 
 ## Framework languge:
 
 - The purpose and use of Vuejs is just to make project smooth and reusability of its component!
-- as per javascript framework vue js is an advance language of javascript which allows us to make any project as single page application and also route based project (server side rendering)!
+- as per javascript framework vue js is an advance language of javascript which allows us to make any project as single page application and also route based project (server side rendering!)
 
 ## UI Framework: 
 
