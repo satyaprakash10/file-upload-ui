@@ -50,7 +50,7 @@ Note: this component requires more time to customize your own requirements based
 ## Framework languge:
 
 - The purpose and use of Vuejs is just to make project smooth and reusability of its component!
-- as per javascript framework vue js is an advance language of javascript which allows us to make any project as single page application and also route based project (server side rendering!)
+- as per javascript framework vue js is an advance language of javascript which allows us to make any project as single page application and also route based project (server side rendering)!
 
 ## UI Framework: 
 
