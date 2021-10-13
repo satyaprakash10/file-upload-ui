@@ -40,10 +40,10 @@ the component whch is used to make this demo fulfilled is vuedropzone which help
 Note: this component requires more time to customize your own requirements based on given structure and purpose! however, the actuall use of this component i.e, vuedropzone file upload is ready to upload any file with the recommended size and validation check!
 
 
-## Why I have use vue-dropzone plugins and component:-
+## Why I have use vue-dropzone libraries and component:-
 
 - The vuedropzone allows us to use all the features which are covered to upload any file dynamically.
-- this component plugin manage the process of file managing easily and flexibility, by simply runing the different status event and the use of its respective necessary methods on run time!
+- this component libraries manage the process of file managing easily and flexibility, by simply runing the different status event and the use of its respective necessary methods on run time!
 - hence this vuedropzone if fully relaible to use and to manage the file uploading process and its structure!
 
 
