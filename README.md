@@ -13,7 +13,7 @@ Steps to be follow to run the project!
 Project description:
 
 - This project is made for just demo purpose to display and to check the file managing system and its process!
-- the framework i.e, language which is used to build this project is : `Vuejs` (javasxript framework)
+- the framework i.e, language which is used to build this project is : `Vuejs` (java script framework)
 - the UI framework which is used to design the structure overflow of this file managing demo is `TailwindUI css`
 - the component whch is used to make this demo fulfilled is `vuedropzone` which helps to track the file managing system and to upload the files!
 
