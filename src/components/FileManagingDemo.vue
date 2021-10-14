@@ -6,12 +6,6 @@
         <file-upload class="" />
       </transition>
     </div>
-
-    <!-- Next up uploading section  -->
-
-    <!-- Completed upload section  -->
-
-    <!-- Incomplete download section  -->
   </div>
 </template>
 
@@ -19,7 +13,6 @@
 // import FileUploadCompleted from './FileUploadCompleted.vue'
 // import LoadingIcon from './icons/LoadingIcon.vue'
 // import FileIcon from './icons/FileIcon.vue'
-// import RetryIcon from './icons/RetryIcon.vue'
 // import CheckMarkIcon from './icons/CheckMarkIcon.vue'
 // import IncompleteFileUpload from './IncompleteFileUpload.vue'
 // import NextUpFileUpload from './NextUpFileUpload.vue'
