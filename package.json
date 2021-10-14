@@ -8,8 +8,15 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@xkeshi/image-compressor": "^0.5.3",
     "core-js": "^3.6.5",
+    "cropperjs": "^1.5.12",
+    "filepond": "^4.30.3",
+    "filepond-plugin-file-validate-type": "^1.2.6",
+    "filepond-plugin-image-preview": "^4.6.10",
     "vue": "^2.6.11",
+    "vue-filepond": "^7.0.2",
+    "vue-upload-component": "^2.8.22",
     "vue2-dropzone": "^3.6.0"
   },
   "devDependencies": {

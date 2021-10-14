@@ -3,9 +3,9 @@
     <div
       :class="[
         {
-          'shadow-lg scroll-navabar bg-white h-10 sm:shadow-lg bg-transparent z-1': isActive,
+          'shadow-lg scroll-navabar bg-white h-10 sm:shadow-lg z-1': isActive,
         },
-        'fixed top-0 transparent-navabar   shadow-lg sm:shadow-lg  left-0 z-40 bg-white py-8 top-0 h-24 w-full',
+        'fixed top-0 transparent-navabar shadow-lg sm:shadow-lg  left-0 z-40 bg-white py-8 top-0 h-24 w-full',
       ]"
     >
       <div
