@@ -1,1041 +1,445 @@
 <template>
-  <div class="">
-    <!--file Upload start stop button  -->
-    <div class="upload-button cursor-pointer flex space-x-6">
-      <div
-        class="bg-blue-500 rounded-md shadow-lg hover:bg-opacity-75 transition-all duration-300  cursor-pointer px-4 py-2 text-white flex items-center"
+  <div class="mt-32 relative mb-10 h-full max-w-7xl mx-auto w-full px-8">
+    <div class="flex items-center justify-between mt-6">
+      <h1 class="font-medium text-base sm:text-xl text-gray-900">
+        Uploading
+      </h1>
+
+      <a
+        @click="vremoved"
+        class="font-normal focus:outline-none hover:underline cursor-pointer hover:text-blue-500 hover:font-medium uppercase flex items-center text-base sm:text-base text-blue-400"
       >
-        <file-upload
-          class="cursor-pointer"
-          :post-action="postAction"
-          :put-action="putAction"
-          :extensions="extensions"
-          :accept="accept"
-          :multiple="multiple"
-          :directory="directory"
-          :create-directory="createDirectory"
-          :size="size || 0"
-          :thread="thread < 1 ? 1 : thread > 5 ? 5 : thread"
-          :headers="headers"
-          :data="data"
-          :drop="drop"
-          :drop-directory="dropDirectory"
-          :add-index="addIndex"
-          v-model="files"
-          @input-filter="inputFilter"
-          @input-file="inputFile"
-          ref="upload"
+        Cancel Upload
+
+        <ChevronUpArrowIcon
+          @click="isUploading = !isUploading"
+          class="mr-5 ml-4 text-gray-900 "
+          style="40px"
+          v-if="!isUploading"
+        />
+        <ChevronDownArrowIcon
+          class="mr-5 ml-4 text-gray-900 "
+          style="40px"
+          v-else
+        />
+      </a>
+    </div>
+
+    <!-- border  -->
+    <div class="border mt-3 mb-6 border-gray-200 max-w-7xl mx-auto"></div>
+
+    <!-- Vue Dropzone file upload -->
+    <div class="" v-show="isUploading">
+      <vue-dropzone
+        id="dropzone"
+        class="bg-gray-100  hover:bg-gray-200 hover:border-gray-200 cursor-pointer hover:text-gray-600 px-4 py-5 rounded-md shadow-sm hover:shadow-sm transition-all duration-300"
+        ref="myVueDropzone"
+        :useCustomSlot="true"
+        :options="dropzoneOptions"
+        @vdropzone-error="errorFiles"
+        @vdropzone-success="successFiles"
+        @vdropzone-files-added="filesAddedHandler"
+        @vdropzone-total-upload-progress="progressHandler"
+      >
+        <div class="dropzone-custom-content">
+          <h3 class="dropzone-custom-title">
+            Drag and drop to upload File content!
+          </h3>
+          <div class="subtitle">
+            ...or click to select a file from your computer
+          </div>
+        </div>
+      </vue-dropzone>
+    </div>
+
+    <!-- Next up file uploading section -->
+    <div class="mt-10">
+      <div class="flex items-center justify-between">
+        <h1 class="font-medium text-base sm:text-xl text-gray-900">
+          Next Up
+        </h1>
+
+        <a
+          @click="vremoved"
+          class="font-normal focus:outline-none hover:underline cursor-pointer hover:text-blue-500 hover:font-medium uppercase flex items-center text-base sm:text-base text-blue-400"
         >
-          Select
-          <i class="fa ml-2 fa-plus"></i>
-        </file-upload>
+          Cancel all
+
+          <ChevronUpArrowIcon
+            @click="isNextUp = !isNextUp"
+            class="mr-5 ml-4 text-gray-900 "
+            style="40px"
+            v-if="!isNextUp"
+          />
+          <ChevronDownArrowIcon
+            class="mr-5 ml-4 text-gray-900 "
+            style="40px"
+            v-else
+          />
+        </a>
       </div>
-      <button
-        type="button"
-        class="cursor-pointer  hover:bg-opacity-75 transition-all duration-300  bg-green-500 rounded-md shadow-lg px-4 py-2 text-white"
-        v-if="!$refs.upload || !$refs.upload.active"
-        @click.prevent="$refs.upload.active = true"
-      >
-        <i class="fa fa-arrow-up" aria-hidden="true"></i>
-        Start Upload
-      </button>
-      <button
-        type="button"
-        class="btn btn-danger"
-        v-else
-        @click.prevent="$refs.upload.active = false"
-      >
-        <i class="fa fa-stop" aria-hidden="true"></i>
-        Stop Upload
-      </button>
-    </div>
-    <!-- Initial file Uploading section -->
-    <div class="upload" v-show="!isOption && isUploading">
-      <div>
-        <table class="w-full mt-4 px-6 rounded-md">
-          <tbody class="">
-            <tr v-if="!files.length">
-              <td colspan="9">
-                <div
-                  class="bg-gray-100 hover:border cursor-pointer hover:shadow-sm  transition-all duration-300 hover:scale-x-2 transform hover:border-gray-600 hover:bg-gray-200 py-4 px-6 rounded-md shadow-sm text-center"
-                >
-                  <h4>Drag & Drop files anywhere to upload<br />or</h4>
-                  <label
-                    :for="name"
-                    class="transition duration-500 ease-in-out bg-blue-400 cursor-pointer hover:bg-blue-500 px-4 hover:text-white py-3 rounded-md shadow-sm hover:bg-opacity-35 transform hover:-translate-y-1 hover:scale-90"
-                  >
-                    Choose Files
-                  </label>
-                </div>
-              </td>
-            </tr>
 
-            <!-- file Uploading section  -->
-            <div
-              class="flex items-center justify-between mt-6"
-              v-if="files.length"
-            >
-              <h1 class="font-medium text-base sm:text-xl text-gray-900">
-                Uploading
-              </h1>
+      <!-- border  -->
+      <div class="border mt-3 mb-6 border-gray-200 max-w-7xl mx-auto"></div>
 
-              <a
-                @click.prevent="
-                  files.active
-                    ? $refs.upload.update(files, { error: 'cancel' })
-                    : false
-                "
-                class="font-normal focus:outline-none hover:underline cursor-pointer hover:text-blue-500 hover:font-medium uppercase flex items-center text-base sm:text-base text-blue-400"
-              >
-                Cancel Upload
-
-                <ChevronUpArrowIcon
-                  @click="isUploading = !isUploading"
-                  class="mr-5 ml-4 text-gray-900 "
-                  style="40px"
-                  v-if="!isUploading"
-                />
-                <ChevronDownArrowIcon
-                  class="mr-5 ml-4 text-gray-900 "
-                  style="40px"
-                  v-else
-                />
-              </a>
-            </div>
-
-            <!-- border  -->
-            <div
-              class="border mt-2 mb-4 border-gray-200 max-w-7xl mx-auto"
-              v-if="files.length"
-            ></div>
-
-            <tr v-for="file in files" :key="file.id" class>
-              <div
-                class="bg-gray-100 flex borde-gray-200 px-6 py-4 justify-between shadow-sm w-full rounded-md"
-              >
-                <div class="flex items-center space-x-6">
-                  <td class="">
-                    <img
-                      class="td-image-thumb"
-                      v-if="file.thumb"
-                      :src="file.thumb"
-                    />
-                    <span v-else>No Image</span>
-                  </td>
-
-                  <!-- File name and size  -->
-                  <td>
-                    <div class="text-gray-600 font-normal text-base tuncate">
-                      {{ file.name }}
-                    </div>
-                    <div class="text-gray-400 font-normal text-sm mt-2">
-                      {{ file.size }} MB
-                    </div>
-                  </td>
-                </div>
-
-                <div>
-                  <!-- X-Icon to CANCEL FILE UPLOADING -->
-                  <div class="mt-4 ">
-                    <a
-                      class="relative"
-                      :class="{ 'dropdown-item': true, disabled: !file.active }"
-                      href="#"
-                      @click.prevent="$refs.upload.remove(file)"
-                    >
-                      <XIcon
-                        class="-top-6 absolute cursor-pointer disabled h-4 hover:text-blue-500 right-0 w-8 z-10"
-                      />
-                    </a>
-                  </div>
-
-                  <!-- file progress bar status  -->
-                  <div
-                    class="progress"
-                    v-if="file.active || file.progress !== '0.00'"
-                  >
-                    <div
-                      :class="{
-                        'progress-bar': true,
-                        'progress-bar-striped': true,
-                        'bg-danger': file.error,
-                        'progress-bar-animated': file.active,
-                      }"
-                      role="progressbar"
-                      :style="{ width: file.progress + '%' }"
-                    >
-                      {{ file.progress }}%
-                    </div>
-                  </div>
-
-                  <div class="mt-2">
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      v-if="
-                        file.error &&
-                          file.error !== 'compressing' &&
-                          file.error !== 'image parsing' &&
-                          $refs.upload.features.html5
-                      "
-                      @click.prevent="
-                        $refs.upload.update(file, {
-                          active: true,
-                          error: '',
-                          progress: '0.00',
-                        })
-                      "
-                    >
-                      Retry upload
-                    </a>
-                    <a
-                      :class="{
-                        'dropdown-item': true,
-                        disabled:
-                          file.success ||
-                          file.error === 'compressing' ||
-                          file.error === 'image parsing',
-                      }"
-                      href="#"
-                      v-else
-                      @click.prevent="
-                        file.success ||
-                        file.error === 'compressing' ||
-                        file.error === 'image parsing'
-                          ? false
-                          : $refs.upload.update(file, { active: true })
-                      "
-                    >
-                      Upload
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </tr>
-          </tbody>
-        </table>
+      <div v-show="isNextUp">
+        <div
+          v-for="(file, index) in pendingFileList"
+          :key="index"
+          class="bg-gray-100 hover:bg-gray-200 hover:border-gray-400 rounded-md shadow-sm px-6 py-6 h-32 mb-6"
+        >
+          <img :src="pendingFileList.file" />
+          <div class="relative">
+            <XIcon
+              v-if="pendingFileList.length"
+              class="-top-18 absolute cursor-pointer disabled h-4 hover:text-blue-500 right-0 w-8 z-10"
+            />
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Next Up Upload section  -->
-    <div class="flex items-center justify-between mt-16">
-      <h1 class="font-medium text-base sm:text-xl text-gray-900">
-        Next Up
-      </h1>
+    <!-- Completed uploads Section -->
+    <div class="mt-10">
+      <div class="flex items-center justify-between">
+        <h1 class="font-medium text-base sm:text-xl text-gray-900">
+          Completed
+        </h1>
 
-      <button
-        @click="isNextUp = !isNextUp"
-        class="font-normal focus:outline-none hover:underline cursor-pointer hover:text-blue-500 hover:font-medium uppercase flex items-center text-base sm:text-base text-blue-400"
+        <a
+          @click="vremoved"
+          class="font-normal focus:outline-none hover:underline cursor-pointer hover:text-blue-500 hover:font-medium uppercase flex items-center text-base sm:text-base text-blue-400"
+        >
+          <ChevronUpArrowIcon
+            @click="isCompleted = !isCompleted"
+            class="mr-5 ml-4 text-gray-900 "
+            style="40px"
+            v-if="!isCompleted"
+          />
+          <ChevronDownArrowIcon
+            class="mr-5 ml-4 text-gray-900 "
+            style="40px"
+            v-else
+          />
+        </a>
+      </div>
+
+      <!-- border  -->
+      <div class="border mt-3 mb-6 border-gray-200 max-w-7xl mx-auto"></div>
+
+      <div
+        v-show="isCompleted"
+        v-for="(i, index) in successFilesList"
+        :key="index"
+        class="bg-gray-100 hover:bg-gray-200 hover:border-gray-400 rounded-md shadow-sm px-6 py-6 h-32 mb-6"
       >
-        Cancel all
-        <ChevronUpArrowIcon
-          class="mr-5 ml-4 text-gray-900 "
-          style="40px"
-          v-if="!isNextUp"
-        />
-        <ChevronDownArrowIcon
-          class="mr-5 ml-4 text-gray-900 "
-          style="40px"
-          v-else
-        />
-      </button>
-    </div>
+        {{ successFilesList }}
+        <img :src="dataURL.data" />
+        <div v-show="isCompleted" class="relative">
+          <XIcon
+            v-if="successFilesList.length"
+            class="-top-20 absolute cursor-pointer disabled h-4 hover:text-blue-500 right-0 w-8 z-10"
+          />
+        </div>
+      </div>
 
-    <!-- border -->
-    <div class="border mt-2 mb-4 border-gray-200 max-w-7xl mx-auto"></div>
-
-    <!-- Waiting upload component  -->
-    <div class="upload" v-show="!isOption && isNextUp">
-      <div>
-        <table class="w-full mt-4 px-6 rounded-md">
-          <tbody class="">
-            <!-- <tr v-if="!files.length">
-              <td colspan="9">
-                <div
-                  class="bg-gray-100 hover:border cursor-pointer hover:shadow-sm  transition-all duration-300 hover:scale-x-2 transform hover:border-gray-600 hover:bg-gray-200 py-4 px-6 rounded-md shadow-sm text-center"
-                >
-                  <h4>Drag & Drop files anywhere to upload<br />or</h4>
-                  <label
-                    :for="name"
-                    class="transition duration-500 ease-in-out bg-blue-400 cursor-pointer hover:bg-blue-500 px-4 hover:text-white py-3 rounded-md shadow-sm hover:bg-opacity-35 transform hover:-translate-y-1 hover:scale-90"
-                  >
-                    Choose Files
-                  </label>
-                </div>
-              </td>
-            </tr> -->
-
-            <tr v-for="file in files" :key="file.id">
-              <div
-                class="bg-gray-100 flex borde-gray-200 px-6 py-4 justify-between shadow-sm w-full rounded-md"
-              >
-                <div class="flex items-center space-x-6">
-                  <td class="">
-                    <img
-                      class="td-image-thumb"
-                      v-if="file.thumb"
-                      :src="file.thumb"
-                    />
-                    <span v-else>No Image</span>
-                  </td>
-
-                  <!-- File name and size  -->
-                  <td>
-                    <div class="text-gray-600 font-normal text-base tuncate">
-                      {{ file.name }}
-                    </div>
-                    <div class="text-gray-400 font-normal text-sm mt-2">
-                      {{ file.size }} MB
-                    </div>
-                  </td>
-                </div>
-
-                <div>
-                  <!-- X-Icon to CANCEL FILE UPLOADING -->
-                  <div class="mt-4 ">
-                    <a
-                      class="relative"
-                      :class="{ 'dropdown-item': true, disabled: !file.active }"
-                      href="#"
-                      @click.prevent="$refs.upload.remove(file)"
-                    >
-                      <XIcon
-                        class="-top-6 absolute cursor-pointer disabled h-4 hover:text-blue-500 right-0 w-8 z-10"
-                      />
-                    </a>
-                  </div>
-
-                  <!-- file progress bar status  -->
-                  <div
-                    class="progress"
-                    v-if="file.active || file.progress !== '0.00'"
-                  >
-                    <div
-                      :class="{
-                        'progress-bar': true,
-                        'progress-bar-striped': true,
-                        'bg-danger': file.error,
-                        'progress-bar-animated': file.active,
-                      }"
-                      role="progressbar"
-                      :style="{ width: file.progress + '%' }"
-                    >
-                      {{ file.progress }}%
-                    </div>
-                  </div>
-                  <td v-else-if="file.active">waiting</td>
-
-                  <a
-                    :class="{
-                      'dropdown-item': true,
-                      disabled:
-                        file.success ||
-                        file.error === 'compressing' ||
-                        file.error === 'image parsing',
-                    }"
-                    href="#"
-                    v-else
-                    @click.prevent="
-                      file.success ||
-                      file.error === 'compressing' ||
-                      file.error === 'image parsing'
-                        ? false
-                        : $refs.upload.update(file, { active: true })
-                    "
-                  >
-                    Upload
-                  </a>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    v-if="file.active"
-                    @click.prevent="
-                      $refs.upload.update(file, { active: false })
-                    "
-                    >Abort</a
-                  >
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    v-else-if="
-                      file.error &&
-                        file.error !== 'compressing' &&
-                        file.error !== 'image parsing' &&
-                        $refs.upload.features.html5
-                    "
-                    @click.prevent="
-                      $refs.upload.update(file, {
-                        active: true,
-                        error: '',
-                        progress: '0.00',
-                      })
-                    "
-                    >Retry upload</a
-                  >
-                </div>
-              </div>
-            </tr>
-          </tbody>
-        </table>
+      <div
+        class="font-normal text-gray-400 text-sm mt-5"
+        v-if="!successFilesList"
+      >
+        No file uploads completed yet.
       </div>
     </div>
 
-    <!-- Completed Upload section  -->
-    <div class="flex items-center justify-between mt-16">
-      <h1 class="font-medium text-base sm:text-xl text-gray-900">
-        Completed
-      </h1>
+    <!-- Incomplete Uploading Section -->
+    <div class="mt-10">
+      <div class="flex items-center justify-between">
+        <h1 class="font-medium text-base sm:text-xl text-gray-900">
+          Incomplete Uploads
+        </h1>
 
-      <button
-        @click="isUploadComplete = !isUploadComplete"
-        class="font-normal focus:outline-none hover:underline cursor-pointer hover:text-blue-500 hover:font-medium uppercase flex items-center text-base sm:text-base text-blue-400"
-      >
-        <ChevronUpArrowIcon
-          class="mr-5 ml-4 text-gray-900 "
-          style="40px"
-          v-if="!isUploadComplete"
-        />
-        <ChevronDownArrowIcon
-          class="mr-5 ml-4 text-gray-900 "
-          style="40px"
-          v-else
-        />
-      </button>
-    </div>
-
-    <!-- border  -->
-    <div class="border mt-2 mb-4 border-gray-200 max-w-7xl mx-auto"></div>
-
-    <!-- Completed upload component  -->
-    <div class="upload" v-show="!isOption && isUploadComplete">
-      <div>
-        <table class="w-full mt-4 px-6 rounded-md">
-          <tbody class="">
-            <!-- <tr v-if="!files.length">
-              <td colspan="9">
-                <div
-                  class="bg-gray-100 hover:border cursor-pointer hover:shadow-sm  transition-all duration-300 hover:scale-x-2 transform hover:border-gray-600 hover:bg-gray-200 py-4 px-6 rounded-md shadow-sm text-center"
-                >
-                  <h4>Drag & Drop files anywhere to upload<br />or</h4>
-                  <label
-                    :for="name"
-                    class="transition duration-500 ease-in-out bg-blue-400 cursor-pointer hover:bg-blue-500 px-4 hover:text-white py-3 rounded-md shadow-sm hover:bg-opacity-35 transform hover:-translate-y-1 hover:scale-90"
-                  >
-                    Choose Files
-                  </label>
-                </div>
-              </td>
-            </tr> -->
-
-            <tr v-for="file in files" :key="file.id">
-              <div
-                class="bg-gray-100 flex borde-gray-200 px-6 py-4 justify-between shadow-sm w-full rounded-md"
-              >
-                <div class="flex items-center space-x-6">
-                  <td class="">
-                    <img
-                      class="td-image-thumb"
-                      v-if="file.thumb"
-                      :src="file.thumb"
-                    />
-                    <span v-else>No Image</span>
-                  </td>
-
-                  <!-- File name and size  -->
-                  <td>
-                    <div class="text-gray-600 font-normal text-base tuncate">
-                      {{ file.name }}
-                    </div>
-                    <div class="text-gray-400 font-normal text-sm mt-2">
-                      {{ file.size }} MB
-                    </div>
-                  </td>
-                </div>
-
-                <div>
-                  <!-- X-Icon to CANCEL FILE UPLOADING -->
-                  <div class="mt-4 ">
-                    <a
-                      class="relative"
-                      :class="{ 'dropdown-item': true, disabled: !file.active }"
-                      href="#"
-                      @click.prevent="$refs.upload.remove(file)"
-                    >
-                      <XIcon
-                        class="-top-6 absolute cursor-pointer disabled h-4 hover:text-blue-500 right-0 w-8 z-10"
-                      />
-                    </a>
-                  </div>
-
-                  <!-- file progress bar status  -->
-                  <div
-                    class="progress"
-                    v-if="file.active || file.progress !== '0.00'"
-                  >
-                    <div
-                      :class="{
-                        'progress-bar': true,
-                        'progress-bar-striped': true,
-                        'bg-danger': file.error,
-                        'progress-bar-animated': file.active,
-                      }"
-                      role="progressbar"
-                      :style="{ width: file.progress + '%' }"
-                    >
-                      {{ file.progress }}%
-                    </div>
-                  </div>
-                  <td v-else-if="file.success">success</td>
-
-                  <a
-                    :class="{
-                      'dropdown-item': true,
-                      disabled:
-                        file.success ||
-                        file.error === 'compressing' ||
-                        file.error === 'image parsing',
-                    }"
-                    href="#"
-                    v-else
-                    @click.prevent="
-                      file.success ||
-                      file.error === 'compressing' ||
-                      file.error === 'image parsing'
-                        ? false
-                        : $refs.upload.update(file, { active: true })
-                    "
-                  >
-                    Upload
-                  </a>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    v-if="file.active"
-                    @click.prevent="
-                      $refs.upload.update(file, { active: false })
-                    "
-                    >Abort</a
-                  >
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    v-else-if="
-                      file.error &&
-                        file.error !== 'compressing' &&
-                        file.error !== 'image parsing' &&
-                        $refs.upload.features.html5
-                    "
-                    @click.prevent="
-                      $refs.upload.update(file, {
-                        active: true,
-                        error: '',
-                        progress: '0.00',
-                      })
-                    "
-                    >Retry upload</a
-                  >
-                </div>
-              </div>
-            </tr>
-          </tbody>
-        </table>
+        <button
+          class="font-normal focus:outline-none hover:underline cursor-pointer hover:text-blue-500 hover:font-medium uppercase flex items-center text-base sm:text-base text-blue-400"
+        >
+          <ChevronUpArrowIcon
+            @click="isIncomplete = !isIncomplete"
+            class="mr-5 ml-4 text-gray-900 "
+            style="40px"
+            v-if="!isIncomplete"
+          />
+          <ChevronDownArrowIcon
+            class="mr-5 ml-4 text-gray-900 "
+            style="40px"
+            v-else
+          />
+        </button>
       </div>
-    </div>
 
-    <div class="mt-4 font-normal text-gray-400 text-left text-sm" v-if="!files">
-      No file uploads completed yet.
-    </div>
+      <!-- border  -->
+      <div class="border mt-3 mb-6 border-gray-200 max-w-7xl mx-auto"></div>
 
-    <!-- InComplete Upload section  -->
-    <div class="flex items-center justify-between mt-16">
-      <h1 class="font-medium text-base sm:text-xl text-gray-900">
-        Incomplete Uploads
-      </h1>
-
-      <button
-        @click="isUploadIncomplete = !isUploadIncomplete"
-        class="font-normal focus:outline-none hover:underline cursor-pointer hover:text-blue-500 hover:font-medium uppercase flex items-center text-base sm:text-base text-blue-400"
+      <div
+        v-show="isIncomplete"
+        v-for="(i, index) in rejectedFilesList"
+        :key="index"
+        class="bg-gray-100 hover:bg-gray-200 hover:border-gray-400 rounded-md shadow-sm px-6 py-6 h-32 mb-6"
       >
-        <ChevronUpArrowIcon
-          class="mr-5 ml-4 text-gray-900 "
-          style="40px"
-          v-if="!isUploadIncomplete"
-        />
-        <ChevronDownArrowIcon
-          class="mr-5 ml-4 text-gray-900 "
-          style="40px"
-          v-else
-        />
-      </button>
-    </div>
-
-    <!-- border  -->
-    <div class="border mt-2 mb-4 border-gray-200 max-w-7xl mx-auto"></div>
-    <!-- Incomplete upload component  -->
-    <div class="upload" v-show="!isOption && isUploadIncomplete">
-      <div>
-        <table class="w-full mt-4 px-6 rounded-md">
-          <tbody class="">
-            <!-- <tr v-if="!files.length">
-              <td colspan="9">
-                <div
-                  class="bg-gray-100 hover:border cursor-pointer hover:shadow-sm  transition-all duration-300 hover:scale-x-2 transform hover:border-gray-600 hover:bg-gray-200 py-4 px-6 rounded-md shadow-sm text-center"
-                >
-                  <h4>Drag & Drop files anywhere to upload<br />or</h4>
-                  <label
-                    :for="name"
-                    class="transition duration-500 ease-in-out bg-blue-400 cursor-pointer hover:bg-blue-500 px-4 hover:text-white py-3 rounded-md shadow-sm hover:bg-opacity-35 transform hover:-translate-y-1 hover:scale-90"
-                  >
-                    Choose Files
-                  </label>
-                </div>
-              </td>
-            </tr> -->
-
-            <tr v-for="file in files" :key="file.id">
-              <div
-                class="bg-gray-100 flex borde-gray-200 px-6 py-4 justify-between shadow-sm w-full rounded-md"
-              >
-                <div class="flex items-center space-x-6">
-                  <td class="">
-                    <img
-                      class="td-image-thumb"
-                      v-if="file.thumb"
-                      :src="file.thumb"
-                    />
-                    <span v-else>No Image</span>
-                  </td>
-
-                  <!-- File name and size  -->
-                  <td>
-                    <div class="text-gray-600 font-normal text-base tuncate">
-                      {{ file.name }}
-                    </div>
-                    <div class="text-gray-400 font-normal text-sm mt-2">
-                      {{ file.size }} MB
-                    </div>
-                  </td>
-                </div>
-
-                <div>
-                  <!-- X-Icon to CANCEL FILE UPLOADING -->
-                  <div class="mt-4 ">
-                    <a
-                      class="relative"
-                      :class="{ 'dropdown-item': true, disabled: !file.active }"
-                      href="#"
-                      @click.prevent="$refs.upload.remove(file)"
-                    >
-                      <XIcon
-                        class="-top-6 absolute cursor-pointer disabled h-4 hover:text-blue-500 right-0 w-8 z-10"
-                      />
-                    </a>
-                  </div>
-
-                  <!-- file progress bar status  -->
-                  <div
-                    class="progress"
-                    v-if="file.active || file.progress !== '0.00'"
-                  >
-                    <div
-                      :class="{
-                        'progress-bar': true,
-                        'progress-bar-striped': true,
-                        'bg-danger': file.error,
-                        'progress-bar-animated': file.active,
-                      }"
-                      role="progressbar"
-                      :style="{ width: file.progress + '%' }"
-                    >
-                      {{ file.progress }}%
-                    </div>
-                  </div>
-                  <td v-else-if="file.error">error</td>
-
-                  <a
-                    :class="{
-                      'dropdown-item': true,
-                      disabled:
-                        file.success ||
-                        file.error === 'compressing' ||
-                        file.error === 'image parsing',
-                    }"
-                    href="#"
-                    v-else
-                    @click.prevent="
-                      file.success ||
-                      file.error === 'compressing' ||
-                      file.error === 'image parsing'
-                        ? false
-                        : $refs.upload.update(file, { active: true })
-                    "
-                  >
-                    Upload
-                  </a>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    v-if="file.active"
-                    @click.prevent="
-                      $refs.upload.update(file, { active: false })
-                    "
-                    >Abort</a
-                  >
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    v-else-if="
-                      file.error &&
-                        file.error !== 'compressing' &&
-                        file.error !== 'image parsing' &&
-                        $refs.upload.features.html5
-                    "
-                    @click.prevent="
-                      $refs.upload.update(file, {
-                        active: true,
-                        error: '',
-                        progress: '0.00',
-                      })
-                    "
-                    >Retry upload</a
-                  >
-                </div>
-              </div>
-            </tr>
-          </tbody>
-        </table>
+        {{ rejectedFilesList }}
+        <img :src="rejectedFilesList[i]" />
+        <div v-show="isIncomplete" class="relative">
+          <XIcon
+            class="-top-20 absolute cursor-pointer disabled h-4 hover:text-blue-500 right-0 w-8 z-10"
+          />
+        </div>
       </div>
-    </div>
 
-    <div class="mt-4 font-normal text-gray-400 text-left text-sm" v-if="!files">
-      No incomplete upoads yet.
+      <div class="font-normal text-gray-400 text-sm mt-5" v-if="!errorFiles">
+        No incomplete upoads yet.
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import XIcon from './icons/XIcon.vue'
-import Cropper from 'cropperjs'
-import ImageCompressor from '@xkeshi/image-compressor'
-import FileUpload from 'vue-upload-component'
-import ChevronUpArrowIcon from './icons/ChevronUpArrowIcon.vue'
+import vue2Dropzone from 'vue2-dropzone'
+import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 import ChevronDownArrowIcon from './icons/ChevronDownArrowIcon.vue'
+import ChevronUpArrowIcon from './icons/ChevronUpArrowIcon.vue'
+import XIcon from './icons/XIcon.vue'
 export default {
+  name: 'App',
   components: {
-    FileUpload,
-    XIcon,
-    ChevronUpArrowIcon,
+    vueDropzone: vue2Dropzone,
     ChevronDownArrowIcon,
+    ChevronUpArrowIcon,
+    XIcon,
   },
-
-  data() {
+  data: function() {
     return {
-      files: [],
+      dropzoneOptions: {
+        url: 'https://httpbin.org/post',
+        thumbnailWidth: 150,
+        // maxFilesize: 0.5,
+        headers: { 'My-Awesome-Header': 'header value' },
+      },
       isUploading: true,
-      isNextUp: false,
-      isUploadComplete: false,
-      isUploadIncomplete: false,
-      accept: 'image/png,image/gif,image/jpeg,image/webp',
-      // extensions: 'gif,jpg,jpeg,png,webp',
-      extensions: ['gif', 'jpg', 'jpeg', 'png', 'webp'],
-      // extensions: /\.(gif|jpe?g|png|webp)$/i,
-      minSize: 1024,
-      size: 1024 * 1024 * 10,
-      multiple: true,
-      directory: false,
-      drop: true,
-      dropDirectory: true,
-      createDirectory: false,
-      addIndex: false,
-      thread: 3,
-      name: 'file',
-      postAction: '/upload/post',
-      putAction: '/upload/put',
-      headers: {
-        'X-Csrf-Token': 'xxxx',
-      },
-      data: {
-        _csrf_token: 'xxxxxx',
-      },
-
-      autoCompress: 1024 * 1024,
-      uploadAuto: false,
-      isOption: false,
-
-      addData: {
-        show: false,
-        name: '',
-        type: '',
-        content: '',
-      },
-
-      editFile: {
-        show: false,
-        name: '',
-      },
+      isNextUp: true,
+      isCompleted: true,
+      isIncomplete: true,
+      fileId: 1,
+      success: false,
+      error: false,
+      // removedFile: false,
+      pendingFileList: [],
+      successFilesList: [],
+      rejectedFilesList: [],
     }
   },
 
   watch: {
-    'editFile.show'(newValue, oldValue) {
-      //error
-      if (!newValue && oldValue) {
-        this.$refs.upload.update(this.editFile.id, {
-          error: this.editFile.error || '',
-        })
-      }
-
-      if (newValue) {
-        this.$nextTick(() => {
-          if (!this.$refs.editImage) {
-            return
-          }
-          let cropper = new Cropper(this.$refs.editImage, {
-            autoCrop: false,
-          })
-          this.editFile = {
-            ...this.editFile,
-            cropper,
-          }
-        })
-      }
-    },
-
-    'addData.show'(show) {
-      if (show) {
-        this.addData.name = ''
-        this.addData.type = ''
-        this.addData.content = ''
-      }
+    removedFile() {
+      let that = this
+      setTimeout(function() {
+        that.removedFile = false
+      }, 2000)
     },
   },
 
   methods: {
-    inputFilter(newFile, oldFile, prevent) {
-      if (newFile && !oldFile) {
-        // Before adding a file
+    // Success Completed uploads file
+    async successFiles(file) {
+      this.successFilesList = [
+        ...this.successFilesList,
+        { id: file?.lastModified, file },
+      ]
+      this.pendingFileList = this.pendingFileList?.filter(
+        (f) => f.id != file?.lastModified
+      )
+      this.$refs?.myVueDropzone?.removeFile(file)
+    },
 
-        // Filter system files or hide files
-        if (/(\/|^)(Thumbs\.db|desktop\.ini|\..+)$/.test(newFile.name)) {
-          return prevent()
-        }
+    // Incomplete files
+    errorFiles(file) {
+      this.rejectedFilesList = [
+        ...this.rejectedFilesList,
+        { id: file?.lastModified, file },
+      ]
+    },
 
-        // Filter php html js file
-        if (/\.(php5?|html?|jsx?)$/i.test(newFile.name)) {
-          return prevent()
-        }
-
-        // Automatic compression
-        if (
-          newFile.file &&
-          newFile.error === '' &&
-          newFile.type.substr(0, 6) === 'image/' &&
-          this.autoCompress > 0 &&
-          this.autoCompress < newFile.size
-        ) {
-          newFile.error = 'compressing'
-          const imageCompressor = new ImageCompressor(null, {
-            convertSize: 1024 * 1024,
-            maxWidth: 512,
-            maxHeight: 512,
-          })
-          imageCompressor
-            .compress(newFile.file)
-            .then((file) => {
-              this.$refs.upload.update(newFile, {
-                error: '',
-                file,
-                size: file.size,
-                type: file.type,
-              })
-            })
-            .catch((err) => {
-              this.$refs.upload.update(newFile, {
-                error: err.message || 'compress',
-              })
-            })
-        }
-      }
-
-      if (
-        newFile &&
-        newFile.error === '' &&
-        newFile.file &&
-        (!oldFile || newFile.file !== oldFile.file)
-      ) {
-        // Create a blob field
-        newFile.blob = ''
-        let URL = window.URL || window.webkitURL
-        if (URL) {
-          newFile.blob = URL.createObjectURL(newFile.file)
-        }
-
-        // Thumbnails
-        newFile.thumb = ''
-        if (newFile.blob && newFile.type.substr(0, 6) === 'image/') {
-          newFile.thumb = newFile.blob
-        }
-      }
-
-      // image size
-      if (
-        newFile &&
-        newFile.error === '' &&
-        newFile.type.substr(0, 6) === 'image/' &&
-        newFile.blob &&
-        (!oldFile || newFile.blob !== oldFile.blob)
-      ) {
-        newFile.error = 'image parsing'
-        let img = new Image()
-        img.onload = () => {
-          this.$refs.upload.update(newFile, {
-            error: '',
-            height: img.height,
-            width: img.width,
-          })
-        }
-        img.οnerrοr = () => {
-          this.$refs.upload.update(newFile, { error: 'parsing image size' })
-        }
-        img.src = newFile.blob
+    // Add push files uploading
+    filesAddedHandler(files) {
+      for (let i = 0; i < files?.length; i++) {
+        this.pendingFileList.push({
+          id: files[i]?.lastModified,
+          file: files[i],
+        })
       }
     },
 
-    // add, update, remove File Event
-    inputFile(newFile, oldFile) {
-      if (newFile && oldFile) {
-        // update
+    // Remove file
+    vremoved(file, xhr, error) {
+      console.log('File', file)
+      console.log('Xhr', xhr)
+      console.log('Error', error)
 
-        if (newFile.active && !oldFile.active) {
-          // beforeSend
+      this.removedFile = true
 
-          // min size
-          if (
-            newFile.size >= 0 &&
-            this.minSize > 0 &&
-            newFile.size < this.minSize
-          ) {
-            this.$refs.upload.update(newFile, { error: 'size' })
-          }
-        }
+      // alert('Your file removed successfully.')
+    },
 
-        if (newFile.progress !== oldFile.progress) {
-          // progress
-        }
-
-        if (newFile.error && !oldFile.error) {
-          // error
-        }
-
-        if (newFile.success && !oldFile.success) {
-          // success
-        }
-      }
-
-      if (!newFile && oldFile) {
-        // remove
-        if (oldFile.success && oldFile.response.id) {
-          // $.ajax({
-          //   type: 'DELETE',
-          //   url: '/upload/delete?id=' + oldFile.response.id,
-          // })
-        }
-      }
-
-      // Automatically activate upload
-      if (
-        Boolean(newFile) !== Boolean(oldFile) ||
-        oldFile.error !== newFile.error
-      ) {
-        if (this.uploadAuto && !this.$refs.upload.active) {
-          this.$refs.upload.active = true
-        }
+    // Remove Pending files
+    removePendings() {
+      for (let i = 0; i < this.pendingFileList?.length; i++) {
+        // remove from drag and drop zone
+        this.$refs?.myVueDropzone?.removeFile(this.pendingFileList[i])
+        // remove from pending
+        console.log(this.pendingFileList[i])
+        this.pendingFileList = this.pendingFileList?.filter(
+          (f) => f?.id == this.pendingFileList[i]?.lastModified
+        )
       }
     },
 
-    alert(message) {
-      alert(message)
+    // Progress bar status
+    progressHandler(totaluploadprogress, totalBytes, totalBytesSent) {
+      console.log('totaluploadprogress ', totaluploadprogress)
+      console.log('totalBytes ', totalBytes)
+      console.log('totalBytesSent ', totalBytesSent)
     },
   },
 }
 </script>
 
-<style>
-.example-full .btn-group .dropdown-menu {
-  display: block;
-  visibility: hidden;
-  transition: all 0.2s;
+<style lang="css">
+.vue-dropzone {
+  border: 2px solid rgb(212, 212, 212);
+  font-family: Arial, sans-serif;
+  letter-spacing: 0.2px;
+  color: #777;
+  background: rgba(246, 247, 252, 1);
+  transition: 0.2s linear;
 }
-.example-full .btn-group:hover > .dropdown-menu {
-  visibility: visible;
-  cursor: pointer;
+.vue-dropzone::hover() {
+  border: 2px solid rgb(175, 175, 175);
+  font-family: Arial, sans-serif;
+  background: rgb(153, 152, 152);
+  letter-spacing: 0.2px;
+  color: #777;
+  transition: 0.2s linear;
 }
-
-.example-full label.dropdown-item {
-  margin-bottom: 0;
+.dropzone {
+  min-height: 150px;
+  background: #f6f7fc;
+  /* padding: 20px 20px; */
 }
-
-.example-full .btn-group .dropdown-toggle {
-  margin-right: 0.6rem;
-}
-
-.td-image-thumb {
-  max-width: 4em;
-  max-height: 4em;
-}
-
-.example-full .filename {
-  margin-bottom: 0.3rem;
-}
-
-.example-full .btn-is-option {
-  margin-top: 0.25rem;
-}
-.example-full .upload-button {
-  padding: 0.5rem 0;
-  border-top: 1px solid #e9ecef;
-  border-bottom: 1px solid #e9ecef;
+.vue-dropzone {
+  border: white;
+  font-family: Arial, sans-serif;
+  letter-spacing: 0.2px;
+  color: #777;
+  transition: 0.1s linear;
 }
 
-.example-full .edit-image img {
-  max-width: 100%;
+.rounded-md {
+  border-radius: 0.5rem;
 }
 
-.example-full .edit-image-tool {
-  margin-top: 0.6rem;
+.vue-dropzone:hover {
+  background-color: #e2e7ea94;
+  border: 2px solid #dadada;
+}
+.vue-dropzone > .dz-preview .dz-remove {
+  z-index: 30;
+  margin-left: 12px;
+  padding: 10px;
+  position: relative;
+  /* border: 2px #d3d3d3 solid; */
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  opacity: 0;
 }
 
-.example-full .edit-image-tool .btn-group {
-  margin-right: 0.6rem;
-}
-
-.example-full .footer-status {
-  padding-top: 0.4rem;
-}
-
-.example-full .drop-active {
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  position: fixed;
-  z-index: 9999;
-  opacity: 0.6;
+.dropzone .dz-preview .dz-remove {
+  font-size: 14px;
   text-align: center;
-  background: #000;
+  display: block;
+  cursor: pointer;
+  border: none;
+  margin-top: 22px;
+}
+.vue-dropzone > .dz-preview .dz-remove {
+  position: relative;
+  z-index: 30;
+  color: black;
+  margin-left: 1px;
+  padding: 10px;
+  border: 2px black solid;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  opacity: 0;
+  margin-top: 26px;
 }
 
-.example-full .drop-active h3 {
-  margin: -0.5em 0 0;
+.vue-dropzone > .dz-preview .dz-image {
+  border-radius: 0;
+  width: 42%;
+  height: 100%;
+}
+
+.dropzone .dz-preview.dz-image-preview {
+  background: transparent;
+}
+.dropzone .dz-preview .dz-details {
+  z-index: 20;
   position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-  font-size: 40px;
-  color: #fff;
-  padding: 0;
+  left: 78px;
+  display: block;
+  color: black;
+  opacity: 0;
+  font-size: 13px;
+  min-width: 100%;
+  max-width: 100%;
+  padding: 2em 1em;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 150%;
+}
+.vue-dropzone > .dz-preview .dz-details {
+  bottom: 0;
+  top: 0;
+  color: black;
+  background-color: transparent;
+  transition: opacity 0.2s linear;
+  /* text-align: left; */
+}
+.dropzone .dz-preview .dz-progress {
+  opacity: 1;
+  z-index: 1000;
+  pointer-events: none;
+  position: absolute;
+  height: 40px;
+  left: 34%;
+  top: 24%;
+  margin-top: -8px;
+  width: 40px;
+  margin-left: -40px;
+  background: transparent;
+  -webkit-transform: scale(1);
+  border-radius: 50px;
+  border: 3px solid lightgray;
+  overflow: hidden;
+}
+.dropzone .dz-preview {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  margin: 10px 34px -3px;
+  min-height: 100px;
 }
 </style>
